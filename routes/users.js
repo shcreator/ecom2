@@ -20,6 +20,8 @@ router.post('/register', async (req, res) => {
 });
 
 // User Login (Add JWT token functionality as needed)
-// Other user-related functionalities...
+// User Profile Update
+// Wallet Top-Up 
+// ... other user-related functionalities
 
 module.exports = router;
