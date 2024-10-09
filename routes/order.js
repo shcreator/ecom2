@@ -1,6 +1,6 @@
 const express = require('express');
-const nodemailer = require('nodemailer');
 const pool = require('../db');
+const emailService = require('../services/email'); // Assuming you have a separate email service
 
 const router = express.Router();
 
@@ -13,31 +13,16 @@ router.post('/', async (req, res) => {
       [userId, templateId]
     );
 
-    // Send Email Confirmation
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-      },
-    });
+    // Send Order Confirmation Email
+    await emailService.sendOrderConfirmation(req.body.email, newOrder.rows[0].id);
 
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: req.body.email,
-      subject: 'Order Confirmation',
-      text: `Thank you for your purchase! Your order ID is ${newOrder.rows[0].id}.`,
-    };
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return res.status(500).send(error);
-      }
-      res.json(newOrder.rows[0]);
-    });
+    res.json(newOrder.rows[0]);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
+// Get Orders for a User
+// ... other order-related functionalities
 
 module.exports = router;
